@@ -10,7 +10,7 @@ import com.yumi.android.MActivity;
 import com.yumi.android.sdk.ads.publish.AdError;
 import com.yumi.android.sdk.ads.publish.YumiInterstitial;
 import com.yumi.android.sdk.ads.publish.listener.IYumiInterstitialListener;
-import com.qq.e.union.demo.R;
+import com.android.yumiad.sdk.demo.R;
 
 
 public class InterstitialActivity extends MActivity implements OnClickListener {

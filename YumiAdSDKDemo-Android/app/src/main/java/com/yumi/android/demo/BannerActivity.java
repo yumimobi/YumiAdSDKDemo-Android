@@ -13,7 +13,7 @@ import com.yumi.android.sdk.ads.publish.AdError;
 import com.yumi.android.sdk.ads.publish.YumiBanner;
 import com.yumi.android.sdk.ads.publish.enumbean.AdSize;
 import com.yumi.android.sdk.ads.publish.listener.IYumiBannerListener;
-import com.qq.e.union.demo.R;
+import com.android.yumiad.sdk.demo.R;
 
 public class BannerActivity extends MActivity {
 

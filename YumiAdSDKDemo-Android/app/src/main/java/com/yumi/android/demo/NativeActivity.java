@@ -21,7 +21,7 @@ import com.yumi.android.sdk.ads.publish.AdError;
 import com.yumi.android.sdk.ads.publish.NativeContent;
 import com.yumi.android.sdk.ads.publish.YumiNative;
 import com.yumi.android.sdk.ads.publish.listener.IYumiNativeListener;
-import com.qq.e.union.demo.R;
+import com.android.yumiad.sdk.demo.R;
 
 import java.util.LinkedList;
 import java.util.List;

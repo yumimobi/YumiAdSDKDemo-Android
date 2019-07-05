@@ -12,7 +12,7 @@ import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.TextView;
 
-import com.qq.e.union.demo.R;
+import com.android.yumiad.sdk.demo.R;
 
 
 public abstract class MActivity extends Activity {

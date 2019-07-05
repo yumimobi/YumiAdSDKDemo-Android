@@ -14,7 +14,7 @@ import com.yumi.android.MActivity;
 import com.yumi.android.sdk.ads.publish.AdError;
 import com.yumi.android.sdk.ads.publish.YumiSplash;
 import com.yumi.android.sdk.ads.publish.listener.IYumiSplashListener;
-import com.qq.e.union.demo.R;
+import com.android.yumiad.sdk.demo.R;
 
 import static com.yumi.android.sdk.ads.publish.YumiSplash.DEFAULT_FETCH_SECONDS;
 

@@ -17,7 +17,7 @@ import com.yumi.android.demo.SplashActivity;
 import com.yumi.android.sdk.ads.publish.YumiDebug;
 import com.yumi.android.sdk.ads.publish.YumiSettings;
 import com.yumi.android.sdk.ads.publish.enumbean.YumiGDPRStatus;
-import com.qq.e.union.demo.R;
+import com.android.yumiad.sdk.demo.R;
 
 public class MainActivity extends MActivity implements OnClickListener, OnCheckedChangeListener {
 
@@ -29,7 +29,6 @@ public class MainActivity extends MActivity implements OnClickListener, OnChecke
     private EditText channel;
     private EditText version;
     private EditText bannerSlotID, interstitialSlotID, mdiaSlotID, splashSlotID, nativeSlotID;
-    private CheckBox debug;
     private CheckBox cbIsMatchWindowWidth;
     private CheckBox mGdprConsentStatusCheckBox;
     private boolean isMatchWindowWidth;
@@ -59,7 +58,6 @@ public class MainActivity extends MActivity implements OnClickListener, OnChecke
         version = (EditText) findViewById(R.id.version);
         version.clearFocus();
 
-        debug = (CheckBox) findViewById(R.id.debug);
         cbIsMatchWindowWidth = (CheckBox) findViewById(R.id.cb_isMatchWindowWidth);
 
         mGdprConsentStatusCheckBox = findViewById(R.id.gdpr_settings_check_box);
@@ -88,17 +86,13 @@ public class MainActivity extends MActivity implements OnClickListener, OnChecke
         btnMedia.setOnClickListener(this);
         btnSplash.setOnClickListener(this);
         btnNative.setOnClickListener(this);
-        debug.setOnCheckedChangeListener(this);
         cbIsMatchWindowWidth.setOnCheckedChangeListener(this);
         mGdprConsentStatusCheckBox.setOnCheckedChangeListener(this);
     }
 
     @Override
     public void onCheckedChanged(CompoundButton b, boolean flag) {
-        if (b == debug) {
-            sp.edit().putBoolean("debug", flag).commit();
-            YumiDebug.runInDebugMode(flag);
-        } else if (b == cbIsMatchWindowWidth) {
+        if (b == cbIsMatchWindowWidth) {
             sp.edit().putBoolean("isMatchWindowWidth", flag).commit();
             isMatchWindowWidth = flag;
         } else if (b == mGdprConsentStatusCheckBox) {

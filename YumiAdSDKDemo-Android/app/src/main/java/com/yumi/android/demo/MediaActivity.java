@@ -12,7 +12,7 @@ import com.yumi.android.sdk.ads.publish.AdError;
 import com.yumi.android.sdk.ads.publish.YumiMedia;
 import com.yumi.android.sdk.ads.publish.enumbean.MediaStatus;
 import com.yumi.android.sdk.ads.publish.listener.IYumiMediaListener;
-import com.qq.e.union.demo.R;
+import com.android.yumiad.sdk.demo.R;
 
 public class MediaActivity extends MActivity implements OnClickListener {
 
