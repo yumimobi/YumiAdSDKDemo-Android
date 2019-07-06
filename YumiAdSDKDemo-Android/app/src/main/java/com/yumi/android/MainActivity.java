@@ -65,7 +65,6 @@ public class MainActivity extends MActivity implements OnClickListener, OnChecke
         channel.setText(getStringConfig("channel"));
         version.setText(getStringConfig("version"));
         boolean isdebug = getBooleanConfig("debug");
-        debug.setChecked(isdebug);
         isMatchWindowWidth = getBooleanConfig("isMatchWindowWidth");
         cbIsMatchWindowWidth.setChecked(isMatchWindowWidth);
         YumiDebug.runInDebugMode(isdebug);
