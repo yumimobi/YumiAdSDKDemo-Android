@@ -658,7 +658,6 @@ YumiNativeAdOptions nativeAdOptions = new YumiNativeAdOptions.Builder()
 }
 -dontwarn dalvik.**
 -dontwarn com.tencent.smtt.**
--keep class com.yumi.android.sdk.ads.adapter.** { *; }
 ```
 
 ### 4.2 设置 channelID 与 versionName

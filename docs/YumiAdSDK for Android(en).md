@@ -648,7 +648,6 @@ If your project turn on minifyEnabled, add the following to the proguard file.
 }
 -dontwarn dalvik.**
 -dontwarn com.tencent.smtt.**
--keep class com.yumi.android.sdk.ads.adapter.** { *; }
 ```
 
 ### 4.2 channelID and versionName
