@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -20,17 +19,14 @@ public abstract class MActivity extends Activity {
     protected String channelStr;
     protected String versionStr;
     protected SharedPreferences sp;
-    protected boolean isMatchWindowWidth;
 
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         channelStr = getIntent().getStringExtra("channel");
         versionStr = getIntent().getStringExtra("version");
-        isMatchWindowWidth = getIntent().getBooleanExtra("isMatchWindowWidth", false);
         Log.i("MaActivity", channelStr + " " + versionStr);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         initView();
