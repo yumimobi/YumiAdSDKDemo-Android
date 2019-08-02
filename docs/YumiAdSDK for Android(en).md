@@ -762,8 +762,18 @@ Set targaetSDKveriosn to 27 or less
       android:grantUriPermissions="true">
       <meta-data
           android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/yumiad_file_path" />
+          android:resource="@xml/gdt_file_path" />
      </provider>
+
+     <provider
+            android:name="com.baidu.mobads.openad.FileProvider"
+            android:authorities="${applicationId}.bd.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/bd_file_paths" />
+    </provider>
   ```
 <div style="background-color:rgb(228,244,253);padding:10px;">
 <span style="color:rgb(62,113,167);">
@@ -771,15 +781,14 @@ Set targaetSDKveriosn to 27 or less
 </span>
 </div>
 
-**Step 2: Add an xml folder under the res directory under the project structure, and then create a yumiad_file_path.xml file with the following contents:**
-  ```java
-     <paths xmlns:android="http://schemas.android.com/apk/res/android">
-        <!-- This download path must be GDTDOWNLOAD -->
-        <external-path name="gdt_sdk_download_path" path="GDTDOWNLOAD" />
-     </paths>
-  ```
+**Step 2: Add an xml folder under the res directory under the project structure, download the bd_file_paths.xml and gdt_file_path.xml files, and add the downloaded xml file to the created xml folder:**
+
+Download [bd_file_paths.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/bd_file_paths.xml)
+
+Download [gdt_file_path.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/gdt_file_path.xml)
+
 <div style="background-color:rgb(228,244,253);padding:10px;">
 <span style="color:rgb(250,0,0);">
-<b>Note：</b> If you do not perform the above configuration, some download and install App-type ads will not install the app properly on Android 7.0 or above.
+<b>Note：</b> If you do not configure the above, it will affect the advertising revenue.
 </span>
 </div>

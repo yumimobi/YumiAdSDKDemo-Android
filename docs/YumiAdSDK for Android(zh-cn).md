@@ -765,13 +765,23 @@ YumiSettings.runInCheckPermission(true);
  **步骤一：在 AndroidManifest.xml 中的 Application 标签中添加 provider 标签**
   ```java
      <provider
-      android:name="android.support.v4.content.FileProvider"
-      android:authorities="${applicationId}.fileprovider"
-      android:exported="false"
-      android:grantUriPermissions="true">
-      <meta-data
-          android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/yumiad_file_path" />
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="${applicationId}.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/gdt_file_path" />
+     </provider>
+
+     <provider
+        android:name="com.baidu.mobads.openad.FileProvider"
+        android:authorities="${applicationId}.bd.provider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/bd_file_paths" />
      </provider>
   ```
 <div style="background-color:rgb(228,244,253);padding:10px;">
@@ -780,15 +790,14 @@ YumiSettings.runInCheckPermission(true);
 </span>
 </div>
 
-**步骤二：在项目结构下的 res 目录下添加一个 xml 文件夹，再新建一个yumiad_file_path.xml 的文件，文件内容如下：**
-  ```java
-     <paths xmlns:android="http://schemas.android.com/apk/res/android">
-        <!-- 这个下载路径不可以修改，必须是 GDTDOWNLOAD -->
-        <external-path name="gdt_sdk_download_path" path="GDTDOWNLOAD" />
-     </paths>
-  ```
+**步骤二：在项目结构下的 res 目录下添加一个 xml 文件夹，下载bd_file_paths.xml和gdt_file_path.xml文件，将下载下来的xml文件添加到创建的 xml 文件夹中：**
+
+Download [bd_file_paths.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/bd_file_paths.xml)
+
+Download [gdt_file_path.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/gdt_file_path.xml)
+
 <div style="background-color:rgb(228,244,253);padding:10px;">
 <span style="color:rgb(250,0,0);">
-<b>注意：</b> 如果不进行上面的配置，部分下载，安装App类型的广告在Android7.0以上设备会出现无法正常安装应用的现象
+<b>注意：</b> 如果不进行上面的配置，会影响广告收入
 </span>
 </div>
