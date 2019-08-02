@@ -39,6 +39,7 @@
       * [6.常见问题](#6常见问题)
          * [6.1 Android6.0以上系统权限处理](#61-android60以上系统权限处理)
          * [6.2 Android 9.0 适配](#62-android-90-适配)
+         * [6.3 targetSdkVersion &gt;= 24 适配](#63-targetsdkversion--24-适配)
 
 # YumiAdSDK Android
 

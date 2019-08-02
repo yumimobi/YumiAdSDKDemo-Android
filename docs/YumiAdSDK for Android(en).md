@@ -39,7 +39,8 @@
       * [6. Q&amp;A](#6-qa)
          * [6.1 Android6.0 or above system permission processing](#61-android60-or-above-system-permission-processing)
          * [6.2 Android 9.0 compatibility considerations](#62-android-90-compatibility-considerations)  
-
+         * [6.3 targetSdkVersion &gt;= 24 compatibility considerations](#63-targetsdkversion--24-compatibility-considerations)
+         
 # YumiAdSDK Android
 ## 1. Overview
 ### 1.1 Target Readers
