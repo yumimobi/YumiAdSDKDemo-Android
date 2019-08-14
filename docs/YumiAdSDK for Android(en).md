@@ -39,7 +39,8 @@
       * [6. Q&amp;A](#6-qa)
          * [6.1 Android6.0 or above system permission processing](#61-android60-or-above-system-permission-processing)
          * [6.2 Android 9.0 compatibility considerations](#62-android-90-compatibility-considerations)  
-
+         * [6.3 targetSdkVersion &gt;= 24 compatibility considerations](#63-targetsdkversion--24-compatibility-considerations)
+         
 # YumiAdSDK Android
 ## 1. Overview
 ### 1.1 Target Readers
@@ -75,7 +76,7 @@ add YumiAdSDK dependencies.
 ```groovy
 dependencies {
     // YumiAdSDK package
-    implementation 'com.yumimobi.ads:yumiad:1.0.0'
+    implementation 'com.yumimobi.ads:yumiad:1.1.1'
 
 ｝
 ```
@@ -190,11 +191,7 @@ public void onBackPressed() {
 
 ```java
 // Display ad
-//
-// delayToShowEnable: Whether to delay the display of the ad
-//  - false: Indicates immediate display, if there is an ad available, it will be displayed immediately, if not, it will not be displayed.
-//  - true: Indicates delayed display. If this method is called, it will be displayed immediately if there is any available ad; if there is no available advertisement, it will automatically pop up the ad when the available advertisement is available (waiting time is uncontrollable), which can be canceled by cancelInterstitialDelayShown() 
-interstitial.showInterstitial(delayToShowEnable);
+interstitial.showInterstitial();
 ```
 
 ```java
@@ -394,6 +391,12 @@ interface IYumiNativeListener {
     void onLayerFailed(AdError adError);
     // This method is fired when a native ad is clicked
     void onLayerClick();
+    // This method is fired when a ExpressAdView render failed(only gdt ExpressAdView could callback it).
+    void onExpressAdRenderFail(NativeContent content, String errorMsg);
+    // This method is fired when ExpressAdView render success(only gdt ExpressAdView could callback it).
+    void onExpressAdRenderSuccess(NativeContent content);
+    // This method is fired when ExpressAdView closed(only gdt ExpressAdView could callback it).
+    void onExpressAdClosed(NativeContent content);
 }
 ```
 
@@ -462,8 +465,22 @@ private void showNativeAd() {
 
         // creater native ad Continer view，use to show Native ad
         FrameLayout nativeAdContinerView = (FrameLayout) findViewById(R.id.ll_ad_continer);
+        // To detect current content is or not an ExpressAdView
+        if (content.isExpressAdView()) {
+            // If current content is an ExpressAdView, you should get the View by content.getExpressAdView() and then add the 
+            // view into ad container
+            YumiNativeAdView adView = (YumiNativeAdView) getLayoutInflater().inflate(R.layout.activity_native_material, null);
+            adView.removeAllViews();
 
-        // // Assumes that your ad layout is in a file call activity_native_material.xml
+            FrameLayout.LayoutParams videoViewLayout = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            videoViewLayout.gravity = Gravity.CENTER;
+
+            adView.addView(content.getExpressAdView(), videoViewLayout);
+            adView.setNativeAd(content);
+            nativeAdContinerView.setClickable(true);
+            nativeAdContinerView.addView(adView);
+        } else {
+        // Assumes that your ad layout is in a file call activity_native_material.xml
         // in the res/layout folder
         YumiNativeAdView adView = (YumiNativeAdView) getLayoutInflater().inflate(R.layout.activity_native_material, null);
 
@@ -495,6 +512,7 @@ private void showNativeAd() {
         nativeAdContinerView.removeAllViews();
         // add adView to nativeAdContinerView
         nativeAdContinerView.addView(adView);
+        }
     }
 }
 ```
@@ -508,6 +526,11 @@ content.isExpired()
 | ----------- | ----------- | ----------------------------------------------------------------------------------- |
 | true        | expired     | this native ad has expired, showing ads that have expired will not generate revenue |
 | false       | not expired | this native ads are valid                                                           |
+
+* calls destroy() to destroy current content
+```java
+content.destroy() // note, this method is belong to NativeContent not to YumiNative
+```
 
 * Inflate the layout
 
@@ -613,6 +636,7 @@ YumiNativeAdOptions nativeAdOptions = new YumiNativeAdOptions.Builder()
                     .setAdAttributionBackgroundColor(Color.argb(90, 0, 0, 0))
                     .setAdAttributionTextSize(10)
                     .setHideAdAttribution(false)
+                    .setHideAdAttribution(new ExpressAdSize(400, 300)) // width: 400dp; height: 300dp
                     .build();
 ```
 * **setIsDownloadImage** Image assets for native ads are returned via instances of NativeContent.Image, which holds a Drawable and a Url. If this option is set to true, the SDK fetches image assets automatically and populates both the Drawable and the Uri for you. If it's set to false, however, the SDK instead populates just the Url field, allowing you to download the actual images at your discretion.Default is true.
@@ -623,6 +647,7 @@ YumiNativeAdOptions nativeAdOptions = new YumiNativeAdOptions.Builder()
 * **setAdAttributionBackgroundColor** use this property to specify the Ad text background color。Default is gray.
 * **setAdAttributionTextSize** use this property to specify the Ad text font size. Default is 10.
 * **setHideAdAttribution** use this property to hide the Ad text. Default is display.
+* **setHideAdAttribution(new ExpressAdSize(width, height))** pass the native ad container's size, the GDT network native ExpressAdView needs to set this property
 
 ## 4. Other settings
 ### 4.1 Proguard
@@ -631,8 +656,6 @@ If your project turn on minifyEnabled, add the following to the proguard file.
 ```c
 -keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,Synthetic,EnclosingMethod
 -keep class com.yumi.android.sdk.ads.** { *;}
--keep class com.yumi.android.sdk.ads.self.**{*;}
--keep class com.yumi.android.sdk.ads.selfmedia.**{*;}
 -keep class com.playableads.**{*;}
 -keep class com.baidu.mobads.** {
   public protected *;
@@ -726,3 +749,46 @@ At present, If the app crashes above Android9.0, you can solve by the ways below
 ```java
 Set targaetSDKveriosn to 27 or less
 ```
+
+### 6.3 targetSdkVersion >= 24 compatibility considerations
+ when you package the app setting targetSdkVersion >= 24 , in order for the SDK to download and install the App class ads can be support normally, you must follow the steps below for compatibility.
+ 
+ **Step 1: Add this provider tag in the Application tag at AndroidManifest.xml**
+  ```java
+     <provider
+      android:name="android.support.v4.content.FileProvider"
+      android:authorities="${applicationId}.fileprovider"
+      android:exported="false"
+      android:grantUriPermissions="true">
+      <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/gdt_file_path" />
+     </provider>
+
+     <provider
+            android:name="com.baidu.mobads.openad.FileProvider"
+            android:authorities="${applicationId}.bd.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/bd_file_paths" />
+    </provider>
+  ```
+<div style="background-color:rgb(228,244,253);padding:10px;">
+<span style="color:rgb(62,113,167);">
+<b>Note：</b>If your project does not support the ${applicationId} configuration, you can replace ${applicationId} with your app package name.
+</span>
+</div>
+
+**Step 2: Add an xml folder under the res directory under the project structure, download the bd_file_paths.xml and gdt_file_path.xml files, and add the downloaded xml file to the created xml folder:**
+
+Download [bd_file_paths.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/bd_file_paths.xml)
+
+Download [gdt_file_path.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/gdt_file_path.xml)
+
+<div style="background-color:rgb(228,244,253);padding:10px;">
+<span style="color:rgb(250,0,0);">
+<b>Note：</b> If you do not configure the above, it will affect the advertising revenue.
+</span>
+</div>

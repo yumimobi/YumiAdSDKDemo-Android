@@ -39,6 +39,7 @@
       * [6.常见问题](#6常见问题)
          * [6.1 Android6.0以上系统权限处理](#61-android60以上系统权限处理)
          * [6.2 Android 9.0 适配](#62-android-90-适配)
+         * [6.3 targetSdkVersion &gt;= 24 适配](#63-targetsdkversion--24-适配)
 
 # YumiAdSDK Android
 
@@ -81,7 +82,7 @@ allprojets {
 ```groovy
 dependencies {
     // YumiAdSDK 包
-    implementation 'com.yumimobi.ads:yumiad:1.0.0'
+    implementation 'com.yumimobi.ads:yumiad:1.1.1'
 
 ｝
 ```
@@ -197,11 +198,7 @@ public void onBackPressed() {
 
 ```java
 // 展示广告
-//
-// delayToShowEnable: 是否延迟展示插屏广告
-//  - false: 表示立即展示，如果有可用插屏广告则立即展示，如果没有就不再展示
-//  - true: 表示延迟展示，调用此方法后，如果有可用插屏广告则立即展示；如果没有可用广告，则会等到有可用广告时，自动弹出插屏广告（等待时间不可控），可以通过 cancelInterstitialDelayShown() 取消该延迟事务
-interstitial.showInterstitial(delayToShowEnable);
+interstitial.showInterstitial();
 ```
 
 ```java
@@ -401,6 +398,12 @@ interface IYumiNativeListener {
     void onLayerFailed(AdError adError);
     // 点击原生广告时触发此方法
     void onLayerClick();
+    // 原生广告渲染失败时触发此方法（目前只有广点通模板广告会触发此方法）
+    void onExpressAdRenderFail(NativeContent content, String errorMsg);
+    // 原生广告渲染成功时触发此方法（目前只有广点通模板广告会触发此方法）
+    void onExpressAdRenderSuccess(NativeContent content);
+    // 关闭原生广告时触发此方法（目前只有广点通模板广告会触发此方法）
+    void onExpressAdClosed(NativeContent content);
 }
 ```
 
@@ -470,7 +473,20 @@ private void showNativeAd() {
 
         // 获取原生广告父容器，用来显示原生广告
         FrameLayout nativeAdContinerView = (FrameLayout) findViewById(R.id.ll_ad_continer);
+        // 判断当前 content 是否为模板 view
+        if (content.isExpressAdView()) {
+            // 如果当前 content 为模板 View，则通过 content.getExpressAdView() 获取该 View 然后添加到广告容器中
+            YumiNativeAdView adView = (YumiNativeAdView) getLayoutInflater().inflate(R.layout.activity_native_material, null);
+            adView.removeAllViews();
 
+            FrameLayout.LayoutParams videoViewLayout = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            videoViewLayout.gravity = Gravity.CENTER;
+
+            adView.addView(content.getExpressAdView(), videoViewLayout);
+            adView.setNativeAd(content);
+            nativeAdContinerView.setClickable(true);
+            nativeAdContinerView.addView(adView);
+        } else {
         // 填充一个 XML 布局，它的最外层节点为 YumiNativeAdView
         YumiNativeAdView adView = (YumiNativeAdView) getLayoutInflater().inflate(R.layout.activity_native_material, null);
 
@@ -500,6 +516,7 @@ private void showNativeAd() {
         nativeAdContinerView.removeAllViews();
         // 将 adView 添加到父容器中
         nativeAdContinerView.addView(adView);
+        }
     }
 }
 ```
@@ -514,6 +531,11 @@ content.isExpired()
 | ------ | ------ | ------------------------------ |
 | true   | 已过期 | 展示已过期的广告将不会产生收益 |
 | false  | 未过期 | 当前广告可以展示               |
+
+* 通过 destroy 方法销毁当前 content
+```java
+content.destroy() // 注意，此处为 content 对象的 destroy()，非 nativeAd 对象中的 destroy()
+```
 
 * 填充布局
 
@@ -621,6 +643,7 @@ YumiNativeAdOptions nativeAdOptions = new YumiNativeAdOptions.Builder()
                 .setAdAttributionBackgroundColor(Color.argb(90, 0, 0, 0))
                 .setAdAttributionTextSize(10)
                 .setHideAdAttribution(false)
+                .setHideAdAttribution(new ExpressAdSize(400, 300)) // 宽：400dp; 高：300dp
                 .build();
 ```
 * **setIsDownloadImage** 原生广告返回的 Icon 和大图资源为 Image 对象。如果 setIsDownloadImage 设置为 true，则 SDK 会自动获取图片素材资源，并为您填充 Image 对象中的 Drawable, url, scale 属性；如果 setIsDownloadImage 设置为 false, SDK 将不会自动下载 Icon 和大图的图片资源，返回的 Icon 和大图的 Image 对象只会填充 url 属性，从而允许您自行决定是否下载实际图片，默认为 true
@@ -631,6 +654,7 @@ YumiNativeAdOptions nativeAdOptions = new YumiNativeAdOptions.Builder()
 * **setAdAttributionBackgroundColor** 使用该属性指定广告标识的背景颜色，默认灰色
 * **setAdAttributionTextSize** 使用该属性指定广告标识的字体大小，默认10
 * **setHideAdAttribution** 使用该属性指定广告标识是否隐藏，默认显示
+* **setHideAdAttribution(new ExpressAdSize(width, height))** 传入原生广告容器的 ExpressAdSize(width, height)，广点通平台原生模板 View 需要设置此属性
 
 ## 4. 其它设置 
 
@@ -641,8 +665,6 @@ YumiNativeAdOptions nativeAdOptions = new YumiNativeAdOptions.Builder()
 ```c
 -keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,Synthetic,EnclosingMethod
 -keep class com.yumi.android.sdk.ads.** { *;}
--keep class com.yumi.android.sdk.ads.self.**{*;}
--keep class com.yumi.android.sdk.ads.selfmedia.**{*;}
 -keep class com.playableads.**{*;}
 -keep class com.baidu.mobads.** {
   public protected *;
@@ -736,3 +758,46 @@ YumiSettings.runInCheckPermission(true);
 ```java
 将targaetSDKveriosn设置为27或者27以下。
 ```
+
+### 6.3 targetSdkVersion >= 24 适配
+ 如果您打包 App 时的 targetSdkVersion >= 24，为了让 SDK 能够正常下载、安装 App 类广告，必须按照下面的步骤做兼容性处理
+ 
+ **步骤一：在 AndroidManifest.xml 中的 Application 标签中添加 provider 标签**
+  ```java
+     <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="${applicationId}.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/gdt_file_path" />
+     </provider>
+
+     <provider
+        android:name="com.baidu.mobads.openad.FileProvider"
+        android:authorities="${applicationId}.bd.provider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/bd_file_paths" />
+     </provider>
+  ```
+<div style="background-color:rgb(228,244,253);padding:10px;">
+<span style="color:rgb(62,113,167);">
+<b>提示：</b>如果你的工程不支持 ${applicationId} 配置，可以将 ${applicationId} 替换为你的App包名
+</span>
+</div>
+
+**步骤二：在项目结构下的 res 目录下添加一个 xml 文件夹，下载bd_file_paths.xml和gdt_file_path.xml文件，将下载下来的xml文件添加到创建的 xml 文件夹中：**
+
+Download [bd_file_paths.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/bd_file_paths.xml)
+
+Download [gdt_file_path.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/gdt_file_path.xml)
+
+<div style="background-color:rgb(228,244,253);padding:10px;">
+<span style="color:rgb(250,0,0);">
+<b>注意：</b> 如果不进行上面的配置，会影响广告收入
+</span>
+</div>
