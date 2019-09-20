@@ -39,8 +39,7 @@
       * [6.常见问题](#6常见问题)
          * [6.1 Android6.0以上系统权限处理](#61-android60以上系统权限处理)
          * [6.2 Android 9.0 适配](#62-android-90-适配)
-         * [6.3 targetSdkVersion &gt;= 24 适配](#63-targetsdkversion--24-适配)
-
+         
 # YumiAdSDK Android
 
 ## 1. 概述
@@ -82,7 +81,7 @@ allprojets {
 ```groovy
 dependencies {
     // YumiAdSDK 包
-    implementation 'com.yumimobi.ads:yumiad:1.1.1'
+    implementation 'com.yumimobi.ads:yumiad:1.1.2'
 
 ｝
 ```
@@ -758,46 +757,3 @@ YumiSettings.runInCheckPermission(true);
 ```java
 将targaetSDKveriosn设置为27或者27以下。
 ```
-
-### 6.3 targetSdkVersion >= 24 适配
- 如果您打包 App 时的 targetSdkVersion >= 24，为了让 SDK 能够正常下载、安装 App 类广告，必须按照下面的步骤做兼容性处理
- 
- **步骤一：在 AndroidManifest.xml 中的 Application 标签中添加 provider 标签**
-  ```java
-     <provider
-        android:name="android.support.v4.content.FileProvider"
-        android:authorities="${applicationId}.fileprovider"
-        android:exported="false"
-        android:grantUriPermissions="true">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/gdt_file_path" />
-     </provider>
-
-     <provider
-        android:name="com.baidu.mobads.openad.FileProvider"
-        android:authorities="${applicationId}.bd.provider"
-        android:exported="false"
-        android:grantUriPermissions="true">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/bd_file_paths" />
-     </provider>
-  ```
-<div style="background-color:rgb(228,244,253);padding:10px;">
-<span style="color:rgb(62,113,167);">
-<b>提示：</b>如果你的工程不支持 ${applicationId} 配置，可以将 ${applicationId} 替换为你的App包名
-</span>
-</div>
-
-**步骤二：在项目结构下的 res 目录下添加一个 xml 文件夹，下载bd_file_paths.xml和gdt_file_path.xml文件，将下载下来的xml文件添加到创建的 xml 文件夹中：**
-
-Download [bd_file_paths.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/bd_file_paths.xml)
-
-Download [gdt_file_path.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/gdt_file_path.xml)
-
-<div style="background-color:rgb(228,244,253);padding:10px;">
-<span style="color:rgb(250,0,0);">
-<b>注意：</b> 如果不进行上面的配置，会影响广告收入
-</span>
-</div>

@@ -39,7 +39,6 @@
       * [6. Q&amp;A](#6-qa)
          * [6.1 Android6.0 or above system permission processing](#61-android60-or-above-system-permission-processing)
          * [6.2 Android 9.0 compatibility considerations](#62-android-90-compatibility-considerations)  
-         * [6.3 targetSdkVersion &gt;= 24 compatibility considerations](#63-targetsdkversion--24-compatibility-considerations)
          
 # YumiAdSDK Android
 ## 1. Overview
@@ -76,7 +75,7 @@ add YumiAdSDK dependencies.
 ```groovy
 dependencies {
     // YumiAdSDK package
-    implementation 'com.yumimobi.ads:yumiad:1.1.1'
+    implementation 'com.yumimobi.ads:yumiad:1.1.2'
 
 ｝
 ```
@@ -749,46 +748,3 @@ At present, If the app crashes above Android9.0, you can solve by the ways below
 ```java
 Set targaetSDKveriosn to 27 or less
 ```
-
-### 6.3 targetSdkVersion >= 24 compatibility considerations
- when you package the app setting targetSdkVersion >= 24 , in order for the SDK to download and install the App class ads can be support normally, you must follow the steps below for compatibility.
- 
- **Step 1: Add this provider tag in the Application tag at AndroidManifest.xml**
-  ```java
-     <provider
-      android:name="android.support.v4.content.FileProvider"
-      android:authorities="${applicationId}.fileprovider"
-      android:exported="false"
-      android:grantUriPermissions="true">
-      <meta-data
-          android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/gdt_file_path" />
-     </provider>
-
-     <provider
-            android:name="com.baidu.mobads.openad.FileProvider"
-            android:authorities="${applicationId}.bd.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/bd_file_paths" />
-    </provider>
-  ```
-<div style="background-color:rgb(228,244,253);padding:10px;">
-<span style="color:rgb(62,113,167);">
-<b>Note：</b>If your project does not support the ${applicationId} configuration, you can replace ${applicationId} with your app package name.
-</span>
-</div>
-
-**Step 2: Add an xml folder under the res directory under the project structure, download the bd_file_paths.xml and gdt_file_path.xml files, and add the downloaded xml file to the created xml folder:**
-
-Download [bd_file_paths.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/bd_file_paths.xml)
-
-Download [gdt_file_path.xml](https://github.com/yumimobi/YumiAdSDKDemo-Android/tree/master/YumiAdSDKDemo-Android/app/src/main/res/xml/gdt_file_path.xml)
-
-<div style="background-color:rgb(228,244,253);padding:10px;">
-<span style="color:rgb(250,0,0);">
-<b>Note：</b> If you do not configure the above, it will affect the advertising revenue.
-</span>
-</div>
