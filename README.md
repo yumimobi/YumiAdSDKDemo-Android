@@ -1,12 +1,6 @@
 # YumiAdSDKDemo-Android
 
-## Latest Version
-
-**v1.1.2**
-
 ## Document
-
-### Android
 
 [**YumiAdSDK for Android(zh-cn)**](https://github.com/yumimobi/YumiAdSDKDemo-Android/blob/master/docs/YumiAdSDK%20for%20Android(zh-cn).md)
 
