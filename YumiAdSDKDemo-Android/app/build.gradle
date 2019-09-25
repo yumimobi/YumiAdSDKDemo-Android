@@ -23,5 +23,5 @@ dependencies {
     implementation "com.android.support:appcompat-v7:26.1.0"
 
 
-    implementation 'com.yumimobi.ads:yumiad:1.1.2'
+    implementation 'com.yumimobi.ads:yumiad:1.2.0'
 }

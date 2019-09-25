@@ -75,7 +75,7 @@ add YumiAdSDK dependencies.
 ```groovy
 dependencies {
     // YumiAdSDK package
-    implementation 'com.yumimobi.ads:yumiad:1.1.2'
+    implementation 'com.yumimobi.ads:yumiad:1.2.0'
 
 ｝
 ```
