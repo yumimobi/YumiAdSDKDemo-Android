@@ -81,7 +81,7 @@ allprojets {
 ```groovy
 dependencies {
     // YumiAdSDK 包
-    implementation 'com.yumimobi.ads:yumiad:4.5.0.000'
+    implementation 'com.yumimobi.ads:yumiad:4.5.1.000'
 
 ｝
 ```
